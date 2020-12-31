@@ -1,0 +1,5 @@
+package me.GuitarXpress.BoatRace;
+
+public enum STATUS {
+	SETTING_UP, JOINABLE, STARTING, ONGOING, CANCELLED, ENDED, UNAVAILABLE
+}

@@ -1,0 +1,12 @@
+main: me.GuitarXpress.BoatRace.Main
+name: BoatRace
+version: 1.0.0
+author: GuitarXpress
+api-version: 1.16
+description: Race your friends!
+website: github.com/HeyImJ0hn
+
+commands:
+   boatrace:
+      aliases: btr
+      usage: /<command>
