@@ -6,6 +6,16 @@ api-version: 1.16
 description: Race your friends!
 website: github.com/HeyImJ0hn
 
+permissions:
+   br.admin:
+      description: Access to admin commands
+   br.state:
+      description: Access to /btr setstate
+   br.use:
+      description: Access to the minigame
+   br.signs:
+      description: Access to plugin sign creation (join & leave signs)
+
 commands:
    boatrace:
       aliases: btr

@@ -126,6 +126,9 @@ public class Signs implements Listener {
 			case ONGOING:
 				sign.setLine(3, "§6ONGOING");
 				break;
+			case STARTUP:
+				sign.setLine(3, "§6ONGOING");
+				break;
 			case CANCELLED:
 				sign.setLine(3, "§cCANCELLED");
 				break;
@@ -155,6 +158,9 @@ public class Signs implements Listener {
 				sign.setLine(3, "§aJOINABLE");
 				break;
 			case ONGOING:
+				sign.setLine(3, "§6ONGOING");
+				break;
+			case STARTUP:
 				sign.setLine(3, "§6ONGOING");
 				break;
 			case CANCELLED:

@@ -11,7 +11,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
@@ -26,7 +25,7 @@ public class Events implements Listener {
 		this.plugin = plugin;
 		gm = new GameManager(plugin);
 	}
-	
+
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		Player p = event.getPlayer();
@@ -42,55 +41,75 @@ public class Events implements Listener {
 		Arena arena = ArenaManager.getArena(arenaName);
 		if (Commands.pArena.get(p.getUniqueId()) != null) {
 			if (p.getWorld().equals(arena.getSpawns().get(0).getWorld())) {
-				if (p.getLocation().clone().subtract(0, 2, 0).getBlock().getType() == GameManager.CHECKPOINTONE
-						&& !GameManager.chkpt1.get(p.getUniqueId())) {
-					GameManager.chkpt1.put(p.getUniqueId(), true);
-					return;
+				if (arena.getStatus() == STATUS.STARTUP) {
+					event.setCancelled(true);
 				}
-				if (p.getLocation().clone().subtract(0, 2, 0).getBlock().getType() == GameManager.CHECKPOINTTWO
-						&& GameManager.chkpt1.get(p.getUniqueId()) && !GameManager.chkpt2.get(p.getUniqueId())) {
-					GameManager.chkpt2.put(p.getUniqueId(), true);
-					return;
-				}
-				if (p.getLocation().clone().subtract(0, 2, 0).getBlock().getType() == GameManager.FINISHLINE) {
-					if (GameManager.chkpt1.get(p.getUniqueId()) && !GameManager.chkpt2.get(p.getUniqueId())) {
-						p.sendMessage(prefix() + "§cYou're going the wrong way!");
-						GameManager.chkpt1.put(p.getUniqueId(), false);
+				if (arena.getStatus() == STATUS.ONGOING) {
+					if (p.getLocation().clone().subtract(0, 2, 0).getBlock().getType() == GameManager.CHECKPOINTONE
+							&& !GameManager.chkpt1.get(p.getUniqueId())) {
+						GameManager.chkpt1.put(p.getUniqueId(), true);
+						return;
 					}
-					if (GameManager.chkpt1.get(p.getUniqueId()) && GameManager.chkpt2.get(p.getUniqueId())) {
-						int lap = GameManager.playerLap.get(p.getUniqueId());
-						GameManager.playerLap.put(p.getUniqueId(), lap + 1);
-						GameManager.chkpt1.put(p.getUniqueId(), false);
-						GameManager.chkpt2.put(p.getUniqueId(), false);
-						if (GameManager.playerLap.get(p.getUniqueId()) == arena.getLaps()) {
-							p.sendTitle("Final Lap!", null, gm.fadeIn, gm.stay, gm.fadeOut);
-						} else {
-							p.sendTitle("Lap " + GameManager.playerLap.get(p.getUniqueId()), null, gm.fadeIn, gm.stay,
-									gm.fadeOut);
+					if (p.getLocation().clone().subtract(0, 2, 0).getBlock().getType() == GameManager.CHECKPOINTTWO
+							&& GameManager.chkpt1.get(p.getUniqueId()) && !GameManager.chkpt2.get(p.getUniqueId())) {
+						GameManager.chkpt2.put(p.getUniqueId(), true);
+						return;
+					}
+					if (p.getLocation().clone().subtract(0, 2, 0).getBlock().getType() == GameManager.FINISHLINE) {
+						if (GameManager.chkpt1.get(p.getUniqueId()) && !GameManager.chkpt2.get(p.getUniqueId())) {
+							p.sendMessage(prefix() + "§cYou're going the wrong way!");
+							GameManager.chkpt1.put(p.getUniqueId(), false);
 						}
-						if (GameManager.playerLap.get(p.getUniqueId()) > arena.getLaps()) {
-							arena.addScore(p);
-							p.getVehicle().remove();
-							p.setGameMode(GameMode.SPECTATOR);
-							p.sendTitle("Finished!", null, gm.fadeIn, 40, gm.fadeOut);
-							p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
-							if (arena.getScoreboard().size() == arena.getPlayers().size()) {
-								gm.endGame(arenaName);
+						if (GameManager.chkpt1.get(p.getUniqueId()) && GameManager.chkpt2.get(p.getUniqueId())) {
+							int lap = GameManager.playerLap.get(p.getUniqueId());
+							GameManager.playerLap.put(p.getUniqueId(), lap + 1);
+							GameManager.chkpt1.put(p.getUniqueId(), false);
+							GameManager.chkpt2.put(p.getUniqueId(), false);
+							if (GameManager.playerLap.get(p.getUniqueId()) == arena.getLaps()) {
+								p.sendTitle("Final Lap!", null, gm.fadeIn, gm.stay, gm.fadeOut);
+							} else {
+								p.sendTitle("Lap " + GameManager.playerLap.get(p.getUniqueId()), null, gm.fadeIn,
+										gm.stay, gm.fadeOut);
 							}
-							return;
+							if (GameManager.playerLap.get(p.getUniqueId()) > arena.getLaps()) {
+								arena.addScore(p);
+								p.getVehicle().remove();
+								p.setGameMode(GameMode.SPECTATOR);
+								p.sendTitle("Finished!", null, gm.fadeIn, 40, gm.fadeOut);
+								p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+//								endTimer(arenaName);
+								if (arena.getScoreboard().size() == arena.getPlayers().size()) {
+									gm.endGame(arenaName);
+								}
+								return;
+							}
 						}
+						return;
 					}
-					return;
 				}
 			}
 			if (p.getGameMode() == GameMode.SPECTATOR) {
 				if (!playerInArea(arena.getCorner1(), arena.getCorner2(), p)) {
-//					p.teleport(arena.getSpawns().get(0));
-					p.teleport(event.getFrom());
+					p.teleport(arena.getSpawns().get(0));
+//					p.teleport(event.getFrom()); // Very buggy
 					return;
 				}
 			}
 		}
+	}
+
+	public void endTimer(String name) {
+		Arena arena = ArenaManager.getArena(name);
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			if (arena.getPlayers().contains(p.getUniqueId())) {
+				p.sendMessage(prefix() + "§eA Player has finished the race. You have §660 seconds §eto finish.");
+			}
+		}
+		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+			if (arena.getStatus() == STATUS.ONGOING) {
+				gm.endGame(name);
+			}
+		}, 60 * 20);
 	}
 
 	@EventHandler

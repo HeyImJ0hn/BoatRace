@@ -18,6 +18,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 public class GameManager implements Listener {
 
@@ -36,7 +38,7 @@ public class GameManager implements Listener {
 	static Map<UUID, Integer> playerLap = new HashMap<UUID, Integer>();
 	static Map<UUID, Boolean> chkpt1 = new HashMap<UUID, Boolean>();
 	static Map<UUID, Boolean> chkpt2 = new HashMap<UUID, Boolean>();
-	
+
 	String winner;
 
 	int checkPlayersTaskID;
@@ -60,6 +62,10 @@ public class GameManager implements Listener {
 									if (ArenaManager.getArena(arena).getPlayers().contains(p.getUniqueId())) {
 										p.sendMessage(prefix() + "§eStarting...");
 									}
+									p.addPotionEffect(
+											new PotionEffect(PotionEffectType.JUMP, 999999, 128, true, false));
+									p.setWalkSpeed(0);
+									ArenaManager.getArena(arena).setStatus(STATUS.STARTUP);
 									startGame(arena);
 								} else {
 									p.sendMessage(prefix()
@@ -84,26 +90,13 @@ public class GameManager implements Listener {
 				}
 			}
 		}
-		ArenaManager.getArena(arena).setStatus(STATUS.ONGOING);
 		setup(arena);
 	}
 
 	public void setup(String arena) {
-		Location loc;
-		for (int i = 0; i < ArenaManager.getArena(arena).getPlayers().size(); i++) {
-			loc = ArenaManager.getArena(arena).getSpawns().get(i);
-			Boat boat = (Boat) loc.getWorld().spawnEntity(loc, EntityType.BOAT);
-			if (i == 1)
-				boat.setWoodType(TreeSpecies.BIRCH);
-			else if (i == 2)
-				boat.setWoodType(TreeSpecies.REDWOOD);
-			else if (i == 3)
-				boat.setWoodType(TreeSpecies.ACACIA);
-		}
 		for (int i = 0; i < ArenaManager.getArena(arena).getPlayers().size(); i++) {
 			for (Player p : Bukkit.getServer().getOnlinePlayers()) {
 				if (ArenaManager.getArena(arena).getPlayers().get(i).equals(p.getUniqueId())) {
-					p.setWalkSpeed(0);
 					playerLap.put(p.getUniqueId(), 1);
 					chkpt1.put(p.getUniqueId(), false);
 					chkpt2.put(p.getUniqueId(), false);
@@ -112,7 +105,16 @@ public class GameManager implements Listener {
 					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
 						Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
 							Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-								p.sendTitle("GO!", null, fadeIn, stay, fadeOut);
+								for (int j = 0; j < ArenaManager.getArena(arena).getPlayers().size(); j++) {
+									Location loc = ArenaManager.getArena(arena).getSpawns().get(j);
+									Boat boat = (Boat) loc.getWorld().spawnEntity(loc, EntityType.BOAT);
+									if (j == 1)
+										boat.setWoodType(TreeSpecies.BIRCH);
+									else if (j == 2)
+										boat.setWoodType(TreeSpecies.REDWOOD);
+									else if (j == 3)
+										boat.setWoodType(TreeSpecies.ACACIA);
+								}
 								for (Entity e : p.getNearbyEntities(1, 1, 1)) {
 									if (e instanceof Boat) {
 										Boat b = (Boat) e;
@@ -121,6 +123,8 @@ public class GameManager implements Listener {
 										}
 									}
 								}
+								ArenaManager.getArena(arena).setStatus(STATUS.ONGOING);
+								p.sendTitle("GO!", null, fadeIn, stay, fadeOut);
 							}, 30);
 							p.sendTitle(String.valueOf(1), null, fadeIn, stay, fadeOut);
 						}, 30);
@@ -130,7 +134,6 @@ public class GameManager implements Listener {
 				}, 30);
 			}
 		}
-
 	}
 
 	public void endGame(String name) {
@@ -146,10 +149,11 @@ public class GameManager implements Listener {
 					Commands.pArena.put(p.getUniqueId(), null);
 					p.setGameMode(GameMode.SURVIVAL);
 					p.teleport(ArenaManager.getLobby());
+					p.removePotionEffect(PotionEffectType.JUMP);
 					p.setWalkSpeed(0.2f);
 					p.sendMessage(prefix() + winner + " §ewon!");
 				}
-				
+
 			}
 			arena.clearScore();
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
@@ -162,7 +166,8 @@ public class GameManager implements Listener {
 	public void playerCheckRunnable(String arena) {
 		checkPlayersTaskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
 			if (ArenaManager.getArena(arena).getPlayers().size() < requiredPlayers) {
-				if (ArenaManager.getArena(arena).getStatus() == STATUS.STARTING || ArenaManager.getArena(arena).getStatus() == STATUS.ONGOING) {
+				if (ArenaManager.getArena(arena).getStatus() == STATUS.STARTING
+						|| ArenaManager.getArena(arena).getStatus() == STATUS.ONGOING) {
 					ArenaManager.getArena(arena).setStatus(STATUS.CANCELLED);
 					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
 						ArenaManager.getArena(arena).setStatus(STATUS.JOINABLE);

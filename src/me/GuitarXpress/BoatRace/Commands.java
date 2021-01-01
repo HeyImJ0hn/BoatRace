@@ -6,12 +6,14 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffectType;
 
 public class Commands implements CommandExecutor {
 
@@ -47,7 +49,7 @@ public class Commands implements CommandExecutor {
 				if (args[0].equalsIgnoreCase("help")) {
 					player.sendMessage(prefix() + "§6Useful Commands: §e/boatrace §7| §e/btr");
 					player.sendMessage("§6/boatrace join <track> §7- §eJoins lobby for specified track.\n"
-							+ "§6/boatrace leave §7- §eLeaves current track.\n"
+							+ "§6/boatrace leave §7- §eLeaves current track/lobby.\n"
 							+ "§6/boatrace help §7- §eShows Useful Commands.\n");
 					if (player.hasPermission("br.admin")) {
 						player.sendMessage(prefix() + "§6Admin Commands: ");
@@ -294,6 +296,8 @@ public class Commands implements CommandExecutor {
 								}
 								player.sendMessage(prefix() + "§cLeft race.");
 								player.teleport(ArenaManager.getLobby());
+								player.setGameMode(GameMode.SURVIVAL);
+								player.removePotionEffect(PotionEffectType.JUMP);
 								player.setWalkSpeed(0.2f);
 								return true;
 							} else {

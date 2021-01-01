@@ -34,4 +34,4 @@ Simply follow the instructions after executing each command.\
 ###### Additional Info:
 Finish line -> **Bedrock**\
 Checkpoint one -> **White Wool**\
-Checkpoint two -> **Black Wool**\
+Checkpoint two -> **Black Wool**
