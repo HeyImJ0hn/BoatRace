@@ -8,6 +8,7 @@ Spigot 1.16 - by GuitarXpress (HeyImJ0hn)
 - /btr help -> Shows useful commands
 - /btr join <track> -> Joins lobby for specified track
 - /btr leave -> Leaves current track/lobby
+- /btr tracks -> Shows available tracks
 
 ###### Admin Commands:
 - /btr add <name> <laps> -> Adds new track
@@ -24,11 +25,11 @@ Spigot 1.16 - by GuitarXpress (HeyImJ0hn)
 - "br.signs" -> Access to plugin sign criation (join & leave signs)
 
 ###### Track Setup:
-To setup a new track simply use /btr add <name of track> <nr of laps>.\
+To setup a new track simply use **/btr add <name of track> <nr of laps>**.\
 After using the command I advise you to set the checkpoints before anything else. The checkpoints are only used to make sure the player follows the right path for the track.\
 For the first checkpoint you need to place **white wool** 1 block under the track. So if the track is on **y**, the wool should be on **y - 1**.\
 The second checkpoint follows the same rule but with **black wool**. The finish line also follows this rule but **bedrock** is used.\
-After setting the checkpoints and finish line you'll need to set the spawns and the boundaries of said track with /btr setspawns <track> and /btr setbounds <track>.\
+After setting the checkpoints and finish line you'll need to set the spawns and the boundaries of said track with **/btr setspawns <track>** and **/btr setbounds <track>**.\
 Simply follow the instructions after executing each command.\
 
 ###### Additional Info:
