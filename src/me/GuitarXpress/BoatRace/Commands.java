@@ -50,6 +50,7 @@ public class Commands implements CommandExecutor {
 					player.sendMessage(prefix() + "§6Useful Commands: §e/boatrace §7| §e/btr");
 					player.sendMessage("§6/boatrace join <track> §7- §eJoins lobby for specified track.\n"
 							+ "§6/boatrace leave §7- §eLeaves current track/lobby.\n"
+							+ "§6/boatrace tracks §7- §eShows available tracks.\n"
 							+ "§6/boatrace help §7- §eShows Useful Commands.\n");
 					if (player.hasPermission("br.admin")) {
 						player.sendMessage(prefix() + "§6Admin Commands: ");

@@ -15,6 +15,7 @@ public class Main extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new Signs(this), this);
 		getServer().getPluginManager().registerEvents(new GameManager(this), this);
 		getCommand("boatrace").setExecutor(new Commands(this));
+		getCommand("boatrace").setTabCompleter(new TabComplete());
 		
 		ItemManager.init();
 		

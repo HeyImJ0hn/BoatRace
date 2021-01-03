@@ -64,13 +64,20 @@ public class Signs implements Listener {
 	public void onSignBreak(BlockBreakEvent event) {
 		if (event.getBlock().getState() instanceof Sign) {
 			Sign sign = (Sign) event.getBlock().getState();
-			signsLoc.remove(sign.getLocation());
-			String s = sign.getLine(1);
-			if (s.length() > 2) {
-				s = s.substring(2, s.length()); // Remove "§6" from the line in order to get track name
+			if (signsLoc.contains(sign.getLocation())) {
+				if (event.getPlayer().hasPermission("br.signs")) {
+					signsLoc.remove(sign.getLocation());
+					String s = sign.getLine(1);
+					if (s.length() > 2) {
+						s = s.substring(2, s.length()); // Remove "§6" from the line in order to get track name
+					}
+					int id = ArenaManager.aName.indexOf(s);
+					Bukkit.getScheduler().cancelTask(id);
+				} else {
+					event.getPlayer().sendMessage("§8[§bBoatRace§8]: §cSorry! You can't break these signs.");
+					event.setCancelled(true);
+				}
 			}
-			int id = ArenaManager.aName.indexOf(s);
-			Bukkit.getScheduler().cancelTask(id);
 		}
 	}
 
