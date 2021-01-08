@@ -33,7 +33,7 @@ After setting the checkpoints and finish line you'll need to set the spawns and 
 Simply follow the instructions after executing each command.\
 
 ##### Sign Setup:
-To create game signs, simply place a sign and write the following:
+To create game signs, simply place a sign and write the following:\
 Keep in mind that each line here represents a line on the sign and _empty_ represents an empty line.
 - [boatrace]
 - «track name»
