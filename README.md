@@ -32,6 +32,20 @@ The second checkpoint follows the same rule but with **black wool**. The finish 
 After setting the checkpoints and finish line you'll need to set the spawns and the boundaries of said track with **/btr setspawns <track>** and **/btr setbounds <track>**.\
 Simply follow the instructions after executing each command.\
 
+##### Sign Setup:
+To create game signs, simply place a sign and write the following:
+Keep in mind that each line here represents a line on the sign and _empty_ represents an empty line.
+- [boatrace]
+- «track name»
+- _empty_
+- _empty_
+
+To create the leave sign write the following:
+- [boatrace]
+- _empty_
+- leave
+- _empty_
+
 ###### Additional Info:
 Finish line -> **Bedrock**\
 Checkpoint one -> **White Wool**\
