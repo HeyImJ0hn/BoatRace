@@ -115,81 +115,83 @@ public class Signs implements Listener {
 		}
 	}
 
-	public void updateSign(Sign sign, String arena) {
-		if (!ArenaManager.getArena(arena).getPlayers().isEmpty()) {
-			sign.setLine(0, "§8[§bBoatRace§8]");
-			sign.setLine(1, "§6" + arena);
-			sign.setLine(2, "§e" + ArenaManager.getArena(arena).getPlayers().size() + "/4");
-			switch (ArenaManager.getArena(arena).getStatus()) {
-			case SETTING_UP:
-				sign.setLine(3, "§6SETTING UP");
-				break;
-			case STARTING:
-				sign.setLine(3, "§aSTARTING");
-				break;
-			case JOINABLE:
-				sign.setLine(3, "§aJOINABLE");
-				break;
-			case ONGOING:
-				sign.setLine(3, "§6ONGOING");
-				break;
-			case STARTUP:
-				sign.setLine(3, "§6ONGOING");
-				break;
-			case CANCELLED:
-				sign.setLine(3, "§cCANCELLED");
-				break;
-			case ENDED:
-				sign.setLine(3, "§cENDED");
-				break;
-			case UNAVAILABLE:
-				sign.setLine(3, "§cUNAVAILABLE");
-				break;
-			default:
-				sign.setLine(3, "§cCONTACT ADMIN");
-				break;
-			}
-			sign.update();
-		} else {
-			sign.setLine(0, "§8[§bBoatRace§8]");
-			sign.setLine(1, "§6" + arena);
-			sign.setLine(2, "§e0/4");
-			switch (ArenaManager.getArena(arena).getStatus()) {
-			case SETTING_UP:
-				sign.setLine(3, "§6SETTING UP");
-				break;
-			case STARTING:
-				sign.setLine(3, "§aSTARTING");
-				break;
-			case JOINABLE:
-				sign.setLine(3, "§aJOINABLE");
-				break;
-			case ONGOING:
-				sign.setLine(3, "§6ONGOING");
-				break;
-			case STARTUP:
-				sign.setLine(3, "§6ONGOING");
-				break;
-			case CANCELLED:
-				sign.setLine(3, "§cCANCELLED");
-				break;
-			case ENDED:
-				sign.setLine(3, "§cENDED");
-				break;
-			case UNAVAILABLE:
-				sign.setLine(3, "§cUNAVAILABLE");
-				break;
-			default:
-				sign.setLine(3, "§cCONTACT ADMIN");
-				break;
-			}
-			sign.update();
-		}
-	}
-
 	public void startSignUpdates(Sign sign, String arena, int id) {
-		id = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
-			updateSign(sign, arena);
+		id = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+			@Override
+			public void run() {
+				if (!signsLoc.contains(sign.getLocation()))
+					return;
+				
+				if (!ArenaManager.getArena(arena).getPlayers().isEmpty()) {
+					sign.setLine(0, "§8[§bBoatRace§8]");
+					sign.setLine(1, "§6" + arena);
+					sign.setLine(2, "§e" + ArenaManager.getArena(arena).getPlayers().size() + "/4");
+					switch (ArenaManager.getArena(arena).getStatus()) {
+					case SETTING_UP:
+						sign.setLine(3, "§6SETTING UP");
+						break;
+					case STARTING:
+						sign.setLine(3, "§aSTARTING");
+						break;
+					case JOINABLE:
+						sign.setLine(3, "§aJOINABLE");
+						break;
+					case ONGOING:
+						sign.setLine(3, "§6ONGOING");
+						break;
+					case STARTUP:
+						sign.setLine(3, "§6ONGOING");
+						break;
+					case CANCELLED:
+						sign.setLine(3, "§cCANCELLED");
+						break;
+					case ENDED:
+						sign.setLine(3, "§cENDED");
+						break;
+					case UNAVAILABLE:
+						sign.setLine(3, "§cUNAVAILABLE");
+						break;
+					default:
+						sign.setLine(3, "§cCONTACT ADMIN");
+						break;
+					}
+					sign.update();
+				} else {
+					sign.setLine(0, "§8[§bBoatRace§8]");
+					sign.setLine(1, "§6" + arena);
+					sign.setLine(2, "§e0/4");
+					switch (ArenaManager.getArena(arena).getStatus()) {
+					case SETTING_UP:
+						sign.setLine(3, "§6SETTING UP");
+						break;
+					case STARTING:
+						sign.setLine(3, "§aSTARTING");
+						break;
+					case JOINABLE:
+						sign.setLine(3, "§aJOINABLE");
+						break;
+					case ONGOING:
+						sign.setLine(3, "§6ONGOING");
+						break;
+					case STARTUP:
+						sign.setLine(3, "§6ONGOING");
+						break;
+					case CANCELLED:
+						sign.setLine(3, "§cCANCELLED");
+						break;
+					case ENDED:
+						sign.setLine(3, "§cENDED");
+						break;
+					case UNAVAILABLE:
+						sign.setLine(3, "§cUNAVAILABLE");
+						break;
+					default:
+						sign.setLine(3, "§cCONTACT ADMIN");
+						break;
+					}
+					sign.update();
+				}
+			}
 		}, 0, 5);
 	}
 

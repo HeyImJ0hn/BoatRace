@@ -20,6 +20,7 @@ public class Commands implements CommandExecutor {
 	Main plugin;
 
 	public GameManager gm;
+	public ArenaManager am;
 
 	int laps;
 
@@ -38,6 +39,7 @@ public class Commands implements CommandExecutor {
 		Player player = (Player) sender;
 
 		gm = new GameManager(plugin);
+		am = new ArenaManager(plugin);
 
 		if (cmd.getName().equalsIgnoreCase("boatrace") || cmd.getName().equalsIgnoreCase("btr")) {
 			if (args.length == 0) {
@@ -71,6 +73,43 @@ public class Commands implements CommandExecutor {
 			}
 
 			if (player.hasPermission("br.admin")) {
+//				if (args.length == 1) {
+//					if (args[0].equalsIgnoreCase("load")) {
+//						player.sendMessage(prefix()
+//								+ "§cAre you sure you want to load the config? Confirm with §e/btr load confirm");
+//					}
+//					if (args[0].equalsIgnoreCase("save")) {
+//						player.sendMessage(prefix()
+//								+ "§cAre you sure you want to save the config? Confirm with §e/btr save confirm");
+//					}
+//					if (args[0].equalsIgnoreCase("reload")) {
+//						player.sendMessage(prefix()
+//								+ "§cAre you sure you want to reload the config? Confirm with §e/btr reload confirm");
+//					}
+//				}
+//				if (args.length == 2) {
+//					if (args[0].equalsIgnoreCase("load")) {
+//						if (args[1].equalsIgnoreCase("confirm")) {
+//							am.load();
+//							player.sendMessage(prefix() + "§aConfig loaded.");
+//						}
+//					}
+//					if (args[0].equalsIgnoreCase("save")) {
+//						if (args[1].equalsIgnoreCase("confirm")) {
+//							am.save();
+//							player.sendMessage(prefix() + "§aConfig saved.");
+//						}
+//					}
+//					if (args[0].equalsIgnoreCase("reload")) {
+//						if (args[1].equalsIgnoreCase("confirm")) {
+//							am.save();
+//							Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+//								am.load();
+//								player.sendMessage(prefix() + "§aConfig reloaded.");
+//							}, 1 * 20);
+//						}
+//					}
+//				}
 				if (args[0].equalsIgnoreCase("get")) {
 					String name = args[1];
 					Bukkit.broadcastMessage(ArenaManager.getArena(name).toString());
@@ -108,7 +147,8 @@ public class Commands implements CommandExecutor {
 					player.sendMessage(prefix() + "§aAdded race §e" + name + ".");
 					player.sendMessage(
 							prefix() + "§eStart setting player spawnpoints with §6/boatrace setspawns <race track>§e.");
-					player.sendMessage(prefix() + "§eStart track boundaries with §6/boatrace setbounds <race track>§e.");
+					player.sendMessage(
+							prefix() + "§eStart track boundaries with §6/boatrace setbounds <race track>§e.");
 					player.sendMessage(prefix() + "§eEach track has §62 checkpoints§e and §61 finish line§e.\n"
 							+ "§eMark the first checkpoint by placing §fwhite whool§e under the track and §8black wool §efor the second checkpoint.\n"
 							+ "§eMark the finish line by placing §8bedrock §eunder the track.");
@@ -319,6 +359,7 @@ public class Commands implements CommandExecutor {
 
 		}
 		return true;
+
 	}
 
 	public String prefix() {

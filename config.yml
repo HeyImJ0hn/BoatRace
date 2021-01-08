@@ -1,3 +1,7 @@
 lobbyLoc:
 
 tracks:
+
+variables:
+   requiredplayers: 2
+   waittime: 20 #In seconds

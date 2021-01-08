@@ -78,6 +78,14 @@ public class ArenaManager {
 			int id = aName.indexOf(s);
 			si.startSignUpdates(sign, s, id);
 		}
+		
+		if (plugin.getConfig().get("variables") != null) {
+			GameManager.REQUIREDPLAYERS = plugin.getConfig().getInt("variables.requiredplayers");
+			GameManager.WAITTIME = plugin.getConfig().getInt("variables.waittime");
+		} else {
+			System.out.println("§8[§bBoatRace§8] " + "§cCould not get variables from config - Empty");
+		}
+		plugin.getConfig().options().copyDefaults(true);
 		plugin.saveDefaultConfig();
 		plugin.saveConfig();
 	}
@@ -99,6 +107,7 @@ public class ArenaManager {
 		if (!Signs.signsLoc.isEmpty()) {
 			plugin.getConfig().set("signs.location", Signs.signsLoc);
 		}
+		plugin.getConfig().options().copyDefaults(true);
 		plugin.saveDefaultConfig();
 		plugin.saveConfig();
 	}
