@@ -66,69 +66,51 @@ public class GameManager implements Listener {
 									timer--;
 									switch (timer) {
 									case 5:
-										if (ArenaManager.getArena(arena).getPlayers().contains(p.getUniqueId())) {
-											p.sendMessage(prefix() + "§eStarting in §65 §eseconds.");
-										}
+										sendStartNoti(arena, 5);
 										break;
 									case 4:
-										if (ArenaManager.getArena(arena).getPlayers().contains(p.getUniqueId())) {
-											p.sendMessage(prefix() + "§eStarting in §64 §eseconds.");
-										}
+										sendStartNoti(arena, 4);
 										break;
 									case 3:
-										if (ArenaManager.getArena(arena).getPlayers().contains(p.getUniqueId())) {
-											p.sendMessage(prefix() + "§eStarting in §63 §eseconds.");
-										}
+										sendStartNoti(arena, 3);
 										break;
 									case 2:
-										if (ArenaManager.getArena(arena).getPlayers().contains(p.getUniqueId())) {
-											p.sendMessage(prefix() + "§eStarting in §62 §eseconds.");
-										}
+										sendStartNoti(arena, 2);
 										break;
 									case 1:
-										if (ArenaManager.getArena(arena).getPlayers().contains(p.getUniqueId())) {
-											p.sendMessage(prefix() + "§eStarting in §61 §eseconds.");
-										}
+										sendStartNoti(arena, 1);
 										break;
 									case 0:
 										playerCheck(arena);
 										Bukkit.getScheduler().cancelTask(task);
 										if (ArenaManager.getArena(arena).getStatus() == STATUS.STARTING) {
-											if (ArenaManager.getArena(arena).getPlayers().contains(p.getUniqueId())) {
-												p.sendMessage(prefix() + "§eStarting...");
-												p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 999999, 128,
-														true, false));
-												p.setWalkSpeed(0);
+											for (Player pl : Bukkit.getServer().getOnlinePlayers()) {
+												if (ArenaManager.getArena(arena).getPlayers()
+														.contains(pl.getUniqueId())) {
+													pl.sendMessage(prefix() + "§eStarting...");
+													pl.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 999999,
+															128, true, false));
+													pl.setWalkSpeed(0);
+												}
 											}
 											ArenaManager.getArena(arena).setStatus(STATUS.STARTUP);
 											startGame(arena);
 										} else {
-											if (ArenaManager.getArena(arena).getPlayers().contains(p.getUniqueId())) {
-												p.sendMessage(prefix()
-														+ "§cCancelling game start. Not enough players.\n§ePutting you back in queue.");
+											for (Player pl : Bukkit.getServer().getOnlinePlayers()) {
+												if (ArenaManager.getArena(arena).getPlayers()
+														.contains(pl.getUniqueId())) {
+													pl.sendMessage(
+															prefix() + "§cCancelling game start. Not enough players.\n"
+																	+ prefix() + "§ePutting you back in queue.");
+												}
 											}
 										}
 										break;
 									}
 								}
 							}, 0, 1 * 20);
-//							startingTaskID = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-//								playerCheckRunnable(arena);
-//								if (ArenaManager.getArena(arena).getStatus() == STATUS.STARTING) {
-//									if (ArenaManager.getArena(arena).getPlayers().contains(p.getUniqueId())) {
-//										p.sendMessage(prefix() + "§eStarting...");
-//									}
-//									p.addPotionEffect(
-//											new PotionEffect(PotionEffectType.JUMP, 999999, 128, true, false));
-//									p.setWalkSpeed(0);
-//									ArenaManager.getArena(arena).setStatus(STATUS.STARTUP);
-//									startGame(arena);
-//								} else {
-//									p.sendMessage(prefix()
-//											+ "§cCancelling game start. Not enough players.\n§ePutting you back in queue.");
-//									Bukkit.getScheduler().cancelTask(startingTaskID);
-//								}
-//							}, 20 * 20);
+						} else if (ArenaManager.getArena(arena).getStatus() == STATUS.STARTING) {
+							p.sendMessage(prefix() + "§eGame starting in §6" + timer + "§e seconds.");
 						}
 					}
 				}
@@ -148,6 +130,14 @@ public class GameManager implements Listener {
 			}
 		}
 		setup(arena);
+	}
+	
+	public void sendStartNoti(String arena, int time) {
+		for (Player pl : Bukkit.getServer().getOnlinePlayers()) {
+			if (ArenaManager.getArena(arena).getPlayers().contains(pl.getUniqueId())) {
+				pl.sendMessage(prefix() + "§eStarting in §6" + time + " §eseconds.");
+			}
+		}
 	}
 
 	public void setup(String arena) {
@@ -206,13 +196,13 @@ public class GameManager implements Listener {
 					if (arena.getScoreboard().get(0).equals(p.getUniqueId())) {
 						winner = p.getDisplayName();
 					}
+					p.sendMessage(prefix() + winner + " §ewon!");
 					arena.leave(p);
 					Commands.pArena.put(p.getUniqueId(), null);
 					p.setGameMode(GameMode.SURVIVAL);
 					p.teleport(ArenaManager.getLobby());
 					p.removePotionEffect(PotionEffectType.JUMP);
 					p.setWalkSpeed(0.2f);
-					p.sendMessage(prefix() + winner + " §ewon!");
 				}
 
 			}

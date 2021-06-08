@@ -1,8 +1,9 @@
 main: me.GuitarXpress.BoatRace.Main
 name: BoatRace
-version: 1.0.1
+version: 1.0.2
 author: GuitarXpress
 api-version: 1.16
+softdepend: [Multiverse-Core]
 description: Race your friends!
 website: github.com/HeyImJ0hn
 

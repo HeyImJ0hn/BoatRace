@@ -27,7 +27,7 @@ public class Signs implements Listener {
 
 	@EventHandler
 	public void onSignPlace(SignChangeEvent event) {
-		if (event.getPlayer().hasPermission("br.admin")) {
+		if (event.getPlayer().hasPermission("br.signs")) {
 			if (event.getBlock().getType() == Material.OAK_WALL_SIGN) {
 				if (!event.getLine(0).equals("[boatrace]"))
 					return;
@@ -55,8 +55,6 @@ public class Signs implements Listener {
 					event.getBlock().breakNaturally();
 				}
 			}
-		} else {
-			event.getPlayer().sendMessage("§8[§bBoatRace§8]: §cYou don't have permission to create game signs.");
 		}
 	}
 
@@ -121,7 +119,7 @@ public class Signs implements Listener {
 			public void run() {
 				if (!signsLoc.contains(sign.getLocation()))
 					return;
-				
+
 				if (!ArenaManager.getArena(arena).getPlayers().isEmpty()) {
 					sign.setLine(0, "§8[§bBoatRace§8]");
 					sign.setLine(1, "§6" + arena);

@@ -95,6 +95,8 @@ public class SpawnsManager implements Listener {
 				String s = item.getItemMeta().getLore().get(2);
 				s = s.substring(2, s.length());
 				ArenaManager.getArena(s).setSpawns(locations);
+				ArenaManager am = new ArenaManager(plugin);
+				am.save();
 				p.sendMessage(prefix() + "§eSet §6Player 4 §espawnpoint.");
 				p.sendMessage(prefix() + "§aAll spawnpoints set.");
 				p.getInventory().remove(item);

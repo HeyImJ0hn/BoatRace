@@ -143,9 +143,10 @@ public class Events implements Listener {
 				s = s.substring(2, s.length());
 				Arena arena = ArenaManager.getArena(s);
 				arena.setCorner1(loc);
+				ArenaManager am = new ArenaManager(plugin);
+				am.save();
 				p.sendMessage(prefix() + "§eSet first corner.");
 				p.sendMessage(prefix() + "§eNow setting second corner.");
-
 				ItemMeta meta = item.getItemMeta();
 				List<String> lore = item.getItemMeta().getLore();
 				lore.set(3, "§eCorner 2");
@@ -159,6 +160,8 @@ public class Events implements Listener {
 				s = s.substring(2, s.length());
 				Arena arena = ArenaManager.getArena(s);
 				arena.setCorner2(loc);
+				ArenaManager am = new ArenaManager(plugin);
+				am.save();
 				p.sendMessage(prefix() + "§eSet second corner.");
 				p.sendMessage(prefix() + "§eFinished setting track boundaries.");
 				p.getInventory().remove(event.getItem());
