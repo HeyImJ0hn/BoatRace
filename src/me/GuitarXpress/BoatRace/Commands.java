@@ -346,12 +346,9 @@ public class Commands implements CommandExecutor {
 					if (args.length >= 1) {
 						if (pArena.containsKey(player.getUniqueId())) {
 							if (pArena.get(player.getUniqueId()) != null) {
-								System.out.println("left race");
-								System.out.println(ArenaManager.getArena(pArena.get(player.getUniqueId())).getPlayers().toString());
 								Arena arena = ArenaManager.getArena(pArena.get(player.getUniqueId()));
 								ArenaManager.getArena(pArena.get(player.getUniqueId())).leave(player);
 								if (arena.getPlayers().isEmpty()) {
-									System.out.println("is empty");
 									arena.setStatus(STATUS.JOINABLE);
 								}
 								if (player.isInsideVehicle()) {
