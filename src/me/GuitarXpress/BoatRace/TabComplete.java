@@ -21,6 +21,7 @@ public class TabComplete implements TabCompleter {
 				arguments.add("join");
 				arguments.add("leave");
 				arguments.add("tracks");
+				arguments.add("info");
 			}
 			if (player.hasPermission("br.admin")) {
 				arguments.add("add");

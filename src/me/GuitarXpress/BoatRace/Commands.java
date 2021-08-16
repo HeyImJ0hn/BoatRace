@@ -382,7 +382,7 @@ public class Commands implements CommandExecutor {
 	}
 
 	public String prefix() {
-		return "§8[§bBoatRace§8]: ";
+		return "§8[§bBoatRace§8]: §r";
 	}
 
 }

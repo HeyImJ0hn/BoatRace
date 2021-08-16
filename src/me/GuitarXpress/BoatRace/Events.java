@@ -73,6 +73,11 @@ public class Events implements Listener {
 							}
 							if (GameManager.playerLap.get(p.getUniqueId()) > arena.getLaps()) {
 								arena.addScore(p);
+								for (Player player : Bukkit.getOnlinePlayers()) {
+									if (arena.getPlayers().contains(player.getUniqueId())) {
+										player.sendMessage(prefix() + p.getDisplayName() + " §efinished!");
+									}
+								}
 								p.getVehicle().remove();
 								p.setGameMode(GameMode.SPECTATOR);
 								p.sendTitle("Finished!", null, gm.fadeIn, 40, gm.fadeOut);
@@ -174,7 +179,7 @@ public class Events implements Listener {
 	}
 
 	public String prefix() {
-		return "§8[§bBoatRace§8]: ";
+		return "§8[§bBoatRace§8]: §r";
 	}
 
 	public boolean playerInArea(Location start, Location end, Player player) {
