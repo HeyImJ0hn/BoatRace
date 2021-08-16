@@ -58,7 +58,8 @@ public class GameManager implements Listener {
 					if (ArenaManager.getArena(arena).getPlayers().get(i).equals(p.getUniqueId())) {
 						if (ArenaManager.getArena(arena).getStatus() == STATUS.JOINABLE) {
 							ArenaManager.getArena(arena).setStatus(STATUS.STARTING);
-							Bukkit.broadcastMessage(prefix() + "§eA game is about to start on track §6" + arena + "§e.");
+							Bukkit.broadcastMessage(
+									prefix() + "§eA game is about to start on track §6" + arena + "§e.");
 							timer = WAITTIME;
 							p.sendMessage(prefix() + "§eGame starting in §6" + timer + "§e seconds.");
 							task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
@@ -196,16 +197,9 @@ public class GameManager implements Listener {
 		System.out.println(prefix() + "§e" + name + " ended.");
 		arena.setStatus(STATUS.ENDED);
 		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-			System.out.println("RUNNING TICK");
 			for (Player p : Bukkit.getOnlinePlayers()) {
-				System.out.println("PLAYER FOUND");
 				if (arena.getPlayers().contains(p.getUniqueId())) {
-					System.out.println("PLAYER IN ARENA");
-					System.out.println(p.getDisplayName());
-					System.out.println(arena.getScoreboard().toString());
 					if (arena.getScoreboard().get(0).equals(p.getUniqueId())) {
-						System.out.println(p.getDisplayName());
-						System.out.println("WINNER GOT");
 						winner = p.getDisplayName();
 					}
 					p.sendMessage(prefix() + winner + " §ewon!");
