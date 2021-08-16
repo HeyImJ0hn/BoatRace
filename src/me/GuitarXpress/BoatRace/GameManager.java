@@ -202,7 +202,7 @@ public class GameManager implements Listener {
 					if (arena.getScoreboard().get(0).equals(p.getUniqueId())) {
 						winner = p.getDisplayName();
 					}
-					p.sendMessage(prefix() + winner + " §ewon!");
+					Bukkit.broadcastMessage(prefix() + winner + " §ewon on track §6" + name + "§e.");
 					arena.leave(p);
 					Commands.pArena.put(p.getUniqueId(), null);
 					p.setGameMode(GameMode.SURVIVAL);
