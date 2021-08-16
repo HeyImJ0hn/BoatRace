@@ -131,7 +131,7 @@ public class GameManager implements Listener {
 		}
 		setup(arena);
 	}
-	
+
 	public void sendStartNoti(String arena, int time) {
 		for (Player pl : Bukkit.getServer().getOnlinePlayers()) {
 			if (ArenaManager.getArena(arena).getPlayers().contains(pl.getUniqueId())) {
@@ -143,44 +143,48 @@ public class GameManager implements Listener {
 	public void setup(String arena) {
 		for (int i = 0; i < ArenaManager.getArena(arena).getPlayers().size(); i++) {
 			for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-				if (ArenaManager.getArena(arena).getPlayers().get(i).equals(p.getUniqueId())) {
-					int j = i;
-					playerLap.put(p.getUniqueId(), 1);
-					chkpt1.put(p.getUniqueId(), false);
-					chkpt2.put(p.getUniqueId(), false);
-					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+				if (!ArenaManager.getArena(arena).getPlayers().isEmpty()) {
+					if (ArenaManager.getArena(arena).getPlayers().get(i).equals(p.getUniqueId())) {
+						int j = i;
+						playerLap.put(p.getUniqueId(), 1);
+						chkpt1.put(p.getUniqueId(), false);
+						chkpt2.put(p.getUniqueId(), false);
 						Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
 							Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
 								Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-									Location loc = ArenaManager.getArena(arena).getSpawns().get(j);
-									Boat boat = (Boat) loc.getWorld().spawnEntity(loc, EntityType.BOAT);
-									if (j == 1)
-										boat.setWoodType(TreeSpecies.BIRCH);
-									else if (j == 2)
-										boat.setWoodType(TreeSpecies.REDWOOD);
-									else if (j == 3)
-										boat.setWoodType(TreeSpecies.ACACIA);
-									for (Entity e : p.getNearbyEntities(1, 1, 1)) {
-										if (e instanceof Boat) {
-											Boat b = (Boat) e;
-											if (b.getPassengers().isEmpty()) {
-												b.addPassenger(p);
+									Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+										Location loc = ArenaManager.getArena(arena).getSpawns().get(j);
+										Boat boat = (Boat) loc.getWorld().spawnEntity(loc, EntityType.BOAT);
+										if (j == 1)
+											boat.setWoodType(TreeSpecies.BIRCH);
+										else if (j == 2)
+											boat.setWoodType(TreeSpecies.REDWOOD);
+										else if (j == 3)
+											boat.setWoodType(TreeSpecies.ACACIA);
+										for (Entity e : p.getNearbyEntities(1, 1, 1)) {
+											if (e instanceof Boat) {
+												Boat b = (Boat) e;
+												if (b.getPassengers().isEmpty()) {
+													b.addPassenger(p);
+												}
 											}
 										}
-									}
-									ArenaManager.getArena(arena).setStatus(STATUS.ONGOING);
-									p.sendTitle("GO!", null, fadeIn, stay, fadeOut);
-									p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 100);
+										if (!ArenaManager.getArena(arena).getPlayers().isEmpty()) {
+											ArenaManager.getArena(arena).setStatus(STATUS.ONGOING);
+										}
+										p.sendTitle("GO!", null, fadeIn, stay, fadeOut);
+										p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 100);
+									}, 25);
+									p.sendTitle(String.valueOf(1), null, fadeIn, stay, fadeOut);
+									p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
 								}, 25);
-								p.sendTitle(String.valueOf(1), null, fadeIn, stay, fadeOut);
+								p.sendTitle(String.valueOf(2), null, fadeIn, stay, fadeOut);
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
 							}, 25);
-							p.sendTitle(String.valueOf(2), null, fadeIn, stay, fadeOut);
+							p.sendTitle(String.valueOf(3), null, fadeIn, stay, fadeOut);
 							p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
 						}, 25);
-						p.sendTitle(String.valueOf(3), null, fadeIn, stay, fadeOut);
-						p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
-					}, 25);
+					}
 				}
 			}
 		}

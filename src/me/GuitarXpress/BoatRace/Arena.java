@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -33,11 +34,25 @@ public class Arena {
 	public void join(Player p, String s) {
 		players.add(p.getUniqueId());
 		Commands.pArena.put(p.getUniqueId(), s);
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			for (int i = 0; i < players.size(); i++) {
+				if (player.getUniqueId().equals(players.get(i))) {
+					player.sendMessage("§8[§bBoatRace§8]: §r" + p.getDisplayName() + " §ejoined the track!");
+				}
+			}
+		}
 	}
 
 	public void leave(Player p) {
 		players.remove(p.getUniqueId());
 		Commands.pArena.put(p.getUniqueId(), null);
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			for (int i = 0; i < players.size(); i++) {
+				if (player.getUniqueId().equals(players.get(i))) {
+					player.sendMessage("§8[§bBoatRace§8]: §r" + p.getDisplayName() + " §eleft the track!");
+				}
+			}
+		}
 	}
 
 	public List<UUID> getPlayers() {

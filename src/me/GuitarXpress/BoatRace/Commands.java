@@ -53,7 +53,8 @@ public class Commands implements CommandExecutor {
 					player.sendMessage("§6/boatrace join <track> §7- §eJoins lobby for specified track.\n"
 							+ "§6/boatrace leave §7- §eLeaves current track/lobby.\n"
 							+ "§6/boatrace tracks §7- §eShows available tracks.\n"
-							+ "§6/boatrace help §7- §eShows Useful Commands.\n");
+							+ "§6/boatrace help §7- §eShows Useful Commands.\n"
+							+ "§6/boatrace info <track> - §eShows track information.\n");
 					if (player.hasPermission("br.admin")) {
 						player.sendMessage(prefix() + "§6Admin Commands: ");
 						player.sendMessage("§6/boatrace add <name> <laps> §7- §eAdds new track.\n"
@@ -69,6 +70,23 @@ public class Commands implements CommandExecutor {
 				if (args[0].equalsIgnoreCase("tracks")) {
 					player.sendMessage(prefix() + "§eAvailable Tracks: " + ArenaManager.getArenaList());
 					return true;
+				}
+			} else if (args.length == 2) {
+				if (args[0].equalsIgnoreCase("info")) {
+					if (ArenaManager.getArenaList().contains(args[1])) {
+						Arena arena = ArenaManager.getArena(args[1]);
+						player.sendMessage(prefix() + "§eDisplaying info for track §6" + args[1] + "§e:");
+						player.sendMessage("§7-------------\n"
+								+ "§eName: §6" + args[1] + "\n"
+								+ "§eStatus: §6" + arena.getStatus() + "\n"
+								+ "§eLaps: §6" + arena.getLaps() + "\n"
+								+ "§eCurrent Players: §6" + arena.getPlayers().size() + "\n"
+								+ "§7-------------");
+						return true;
+					} else {
+						player.sendMessage(prefix() + "§cInvalid Track. /boatrace tracks for a list of tracks");
+						return true;
+					}
 				}
 			}
 
@@ -328,10 +346,14 @@ public class Commands implements CommandExecutor {
 					if (args.length >= 1) {
 						if (pArena.containsKey(player.getUniqueId())) {
 							if (pArena.get(player.getUniqueId()) != null) {
-								if (ArenaManager.getArena(pArena.get(player.getUniqueId())).getPlayers().isEmpty()) {
-									ArenaManager.getArena(pArena.get(player.getUniqueId())).setStatus(STATUS.JOINABLE);
-								}
+								System.out.println("left race");
+								System.out.println(ArenaManager.getArena(pArena.get(player.getUniqueId())).getPlayers().toString());
+								Arena arena = ArenaManager.getArena(pArena.get(player.getUniqueId()));
 								ArenaManager.getArena(pArena.get(player.getUniqueId())).leave(player);
+								if (arena.getPlayers().isEmpty()) {
+									System.out.println("is empty");
+									arena.setStatus(STATUS.JOINABLE);
+								}
 								if (player.isInsideVehicle()) {
 									player.getVehicle().remove();
 								}
