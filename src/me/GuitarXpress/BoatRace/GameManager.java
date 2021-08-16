@@ -202,7 +202,6 @@ public class GameManager implements Listener {
 					if (arena.getScoreboard().get(0).equals(p.getUniqueId())) {
 						winner = p.getDisplayName();
 					}
-					Bukkit.broadcastMessage(prefix() + winner + " §ewon on track §6" + name + "§e.");
 					arena.leave(p);
 					Commands.pArena.put(p.getUniqueId(), null);
 					p.setGameMode(GameMode.SURVIVAL);
@@ -210,8 +209,8 @@ public class GameManager implements Listener {
 					p.removePotionEffect(PotionEffectType.JUMP);
 					p.setWalkSpeed(0.2f);
 				}
-
 			}
+			Bukkit.broadcastMessage(prefix() + winner + " §ewon on track §6" + name + "§e.");
 			arena.clearScore();
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
 				arena.setStatus(STATUS.JOINABLE);
