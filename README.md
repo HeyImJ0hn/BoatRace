@@ -1,6 +1,6 @@
 # BoatRace
 Adds a new way to race your friends!\
-Spigot 1.16 - by GuitarXpress (HeyImJ0hn)
+Spigot 1.16/1.17 - by GuitarXpress (HeyImJ0hn)
 
 ###### /boatrace | /btr
 
