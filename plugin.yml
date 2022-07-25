@@ -1,8 +1,8 @@
-main: me.GuitarXpress.BoatRace.Main
+main: me.guitarxpress.boatrace.BoatRace
 name: BoatRace
-version: 1.0.3
+version: 1.1.0
 author: GuitarXpress
-api-version: 1.16
+api-version: 1.18
 softdepend: [Multiverse-Core]
 description: Race your friends!
 website: github.com/HeyImJ0hn
@@ -10,8 +10,8 @@ website: github.com/HeyImJ0hn
 permissions:
    br.admin:
       description: Access to admin commands
-   br.state:
-      description: Access to /btr setstate
+   br.status:
+      description: Access to /btr setstatus
    br.use:
       description: Access to the minigame
    br.signs:

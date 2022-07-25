@@ -1,29 +1,34 @@
-package me.GuitarXpress.BoatRace;
+package me.guitarxpress.boatrace;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import me.guitarxpress.boatrace.enums.Status;
+
 public class Arena {
 
+	private String name;
 	private List<Location> spawnLocs = new ArrayList<Location>();
-
 	private List<UUID> players = new ArrayList<UUID>();
-	
+	private List<UUID> spectators = new ArrayList<UUID>();
 	private List<UUID> scoreboard = new ArrayList<UUID>();
+	private Status status;
+	private Location corner1;
+	private Location corner2;
+	private int laps;
 	
-	STATUS status;
-	
-	Location corner1;
-	Location corner2;
-	
-	int laps;
+	public Arena(String name, Status status, int laps) {
+		this.name = name;
+		this.status = status;
+		this.laps = laps;
+	}
 
-	public Arena(List<Location> spawnLocs, STATUS status, int laps, Location corner1, Location corner2) {
+	public Arena(String name, List<Location> spawnLocs, Status status, int laps, Location corner1, Location corner2) {
+		this.name = name;
 		this.spawnLocs = spawnLocs;
 		this.status = status;
 		this.laps = laps;
@@ -31,32 +36,32 @@ public class Arena {
 		this.corner2 = corner2;
 	}
 
-	public void join(Player p, String s) {
+	public void join(Player p) {
 		players.add(p.getUniqueId());
-		Commands.pArena.put(p.getUniqueId(), s);
-		for (Player player : Bukkit.getOnlinePlayers()) {
-			for (int i = 0; i < players.size(); i++) {
-				if (player.getUniqueId().equals(players.get(i))) {
-					player.sendMessage("§8[§bBoatRace§8]: §r" + p.getDisplayName() + " §ejoined the track!");
-				}
-			}
-		}
 	}
 
 	public void leave(Player p) {
 		players.remove(p.getUniqueId());
-		Commands.pArena.put(p.getUniqueId(), null);
-		for (Player player : Bukkit.getOnlinePlayers()) {
-			for (int i = 0; i < players.size(); i++) {
-				if (player.getUniqueId().equals(players.get(i))) {
-					player.sendMessage("§8[§bBoatRace§8]: §r" + p.getDisplayName() + " §eleft the track!");
-				}
-			}
-		}
+	}
+	
+	public void joinSpectators(Player p) {
+		spectators.add(p.getUniqueId());
+	}
+	
+	public void leaveSpectators(Player p) {
+		spectators.remove(p.getUniqueId());
 	}
 
 	public List<UUID> getPlayers() {
 		return players;
+	}
+	
+	public int getPlayerCount() {
+		return players.size();
+	}
+	
+	public List<UUID> getSpectators() {
+		return spectators;
 	}
 	
 	public List<UUID> getScoreboard(){
@@ -79,11 +84,15 @@ public class Arena {
 		this.spawnLocs = spawnLocations;
 	}
 	
-	public STATUS getStatus() {
+	public void addSpawn(Location spawn) {
+		this.spawnLocs.add(spawn);
+	}
+	
+	public Status getStatus() {
 		return status;
 	}
 	
-	public void setStatus(STATUS status) {
+	public void setStatus(Status status) {
 		this.status = status;
 	}
 	
@@ -109,6 +118,14 @@ public class Arena {
 
 	public void setCorner2(Location corner2) {
 		this.corner2 = corner2;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 }

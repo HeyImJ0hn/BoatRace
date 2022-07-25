@@ -1,33 +1,26 @@
-package me.GuitarXpress.BoatRace;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+package me.guitarxpress.boatrace;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.potion.PotionEffectType;
+
+import me.guitarxpress.boatrace.enums.Status;
+import me.guitarxpress.boatrace.events.EditMode;
+import me.guitarxpress.boatrace.managers.GameManager;
 
 public class Commands implements CommandExecutor {
 
-	Main plugin;
+	BoatRace plugin;
 
 	public GameManager gm;
-	public ArenaManager am;
 
 	int laps;
 
-	static Map<UUID, String> pArena = new HashMap<UUID, String>();
-
-	public Commands(Main plugin) {
+	public Commands(BoatRace plugin) {
 		this.plugin = plugin;
+		gm = plugin.getGameManager();
 	}
 
 	@Override
@@ -38,108 +31,48 @@ public class Commands implements CommandExecutor {
 
 		Player player = (Player) sender;
 
-		gm = new GameManager(plugin);
-		am = new ArenaManager(plugin);
-
 		if (cmd.getName().equalsIgnoreCase("boatrace") || cmd.getName().equalsIgnoreCase("btr")) {
 			if (args.length == 0) {
 				Bukkit.dispatchCommand(player, "boatrace help");
 				return true;
 			}
-			if (args.length == 1) {
 
+			if (args.length == 1) {
 				if (args[0].equalsIgnoreCase("help")) {
 					player.sendMessage(prefix() + "§6Useful Commands: §e/boatrace §7| §e/btr");
 					player.sendMessage("§6/boatrace join <track> §7- §eJoins lobby for specified track.\n"
 							+ "§6/boatrace leave §7- §eLeaves current track/lobby.\n"
 							+ "§6/boatrace tracks §7- §eShows available tracks.\n"
-							+ "§6/boatrace help §7- §eShows Useful Commands.\n"
-							+ "§6/boatrace info <track> - §eShows track information.\n");
+							+ "§6/boatrace help §7- §eShows Useful Commands.");
 					if (player.hasPermission("br.admin")) {
 						player.sendMessage(prefix() + "§6Admin Commands: ");
 						player.sendMessage("§6/boatrace add <name> <laps> §7- §eAdds new track.\n"
 								+ "§6/boatrace remove <track> §7- §eRemoves specified track.\n"
 								+ "§6/boatrace setlobby §7- §eSets BoatRace lobby.\n"
-								+ "§6/boatrace setspawns <track> §7- §eSets player spawnpoints for specified track.\n"
-								+ "§6/boatrace setbounds <track> §7- §eSets boundaries for specified track.\n"
-								+ "§6/boatrace setstate <track> <state> §7- §eSets track state.\n");
+								+ "§6/boatrace edit <track> §7- §eToggles edit mode for specified track.\n"
+								+ "§6/boatrace setstatus <track> <status> §7- §eSets track status.\n");
 					}
 					return true;
-				}
-
-				if (args[0].equalsIgnoreCase("tracks")) {
-					player.sendMessage(prefix() + "§eAvailable Tracks: " + ArenaManager.getArenaList());
-					return true;
-				}
-			} else if (args.length == 2) {
-				if (args[0].equalsIgnoreCase("info")) {
-					if (ArenaManager.getArenaList().contains(args[1])) {
-						Arena arena = ArenaManager.getArena(args[1]);
-						player.sendMessage(prefix() + "§eDisplaying info for track §6" + args[1] + "§e:");
-						player.sendMessage("§7-------------\n"
-								+ "§eName: §6" + args[1] + "\n"
-								+ "§eStatus: §6" + arena.getStatus() + "\n"
-								+ "§eLaps: §6" + arena.getLaps() + "\n"
-								+ "§eCurrent Players: §6" + arena.getPlayers().size() + "\n"
-								+ "§7-------------");
-						return true;
-					} else {
-						player.sendMessage(prefix() + "§cInvalid Track. /boatrace tracks for a list of tracks");
-						return true;
+				} else if (args[0].equalsIgnoreCase("tracks")) {
+					player.sendMessage(prefix() + "§eAvailable Tracks: ");
+					for (Arena arena : gm.getArenas()) {
+						player.sendMessage("§e" + arena.getName() + " - §6" + arena.getStatus().toString());
 					}
+					return true;
 				}
 			}
 
-			if (player.hasPermission("br.admin")) {
-//				if (args.length == 1) {
-//					if (args[0].equalsIgnoreCase("load")) {
-//						player.sendMessage(prefix()
-//								+ "§cAre you sure you want to load the config? Confirm with §e/btr load confirm");
-//					}
-//					if (args[0].equalsIgnoreCase("save")) {
-//						player.sendMessage(prefix()
-//								+ "§cAre you sure you want to save the config? Confirm with §e/btr save confirm");
-//					}
-//					if (args[0].equalsIgnoreCase("reload")) {
-//						player.sendMessage(prefix()
-//								+ "§cAre you sure you want to reload the config? Confirm with §e/btr reload confirm");
-//					}
-//				}
-//				if (args.length == 2) {
-//					if (args[0].equalsIgnoreCase("load")) {
-//						if (args[1].equalsIgnoreCase("confirm")) {
-//							am.load();
-//							player.sendMessage(prefix() + "§aConfig loaded.");
-//						}
-//					}
-//					if (args[0].equalsIgnoreCase("save")) {
-//						if (args[1].equalsIgnoreCase("confirm")) {
-//							am.save();
-//							player.sendMessage(prefix() + "§aConfig saved.");
-//						}
-//					}
-//					if (args[0].equalsIgnoreCase("reload")) {
-//						if (args[1].equalsIgnoreCase("confirm")) {
-//							am.save();
-//							Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-//								am.load();
-//								player.sendMessage(prefix() + "§aConfig reloaded.");
-//							}, 1 * 20);
-//						}
-//					}
-//				}
-				if (args[0].equalsIgnoreCase("get")) {
-					String name = args[1];
-					Bukkit.broadcastMessage(ArenaManager.getArena(name).toString());
-				}
+			if (player.hasPermission("btr.admin")) {
+				// Add
 				if (args[0].equalsIgnoreCase("add")) {
 					if (args.length == 1) {
-						player.sendMessage(prefix() + "§cMissing Arguments (/boatrace add <name>)");
+						player.sendMessage(prefix() + "§cMissing Arguments (/boatrace add <name> <laps>)");
 						return true;
 					} else if (args.length >= 4) {
 						player.sendMessage(prefix() + "§cToo Many Arguments (/boatrace add <name> <laps>)");
 						return true;
 					}
+
 					String name = args[1];
 					try {
 						laps = Integer.parseInt(args[2]);
@@ -150,32 +83,43 @@ public class Commands implements CommandExecutor {
 							player.sendMessage(prefix() + "§cSecond argument must be a number.");
 						return true;
 					}
-					if (ArenaManager.exists(name)) {
+
+					if (gm.exists(name)) {
 						player.sendMessage(prefix() + "§cRace track already exists!");
 						return true;
 					}
-					if (ArenaManager.getLobby() == null) {
-						player.sendMessage(prefix()
-								+ "§cPlease set a lobby before adding race tracks with §6/boatrace setlobby§c.");
-						return true;
-					}
 
-					ArenaManager.registerArena(name, null, STATUS.SETTING_UP, laps, null, null);
-					System.out.println(ArenaManager.arenas.toString());
+					gm.registerArena(name, Status.SETTING_UP, laps);
 					player.sendMessage(prefix() + "§aAdded race §e" + name + ".");
 					player.sendMessage(
-							prefix() + "§eStart setting player spawnpoints with §6/boatrace setspawns <race track>§e.");
-					player.sendMessage(
-							prefix() + "§eStart track boundaries with §6/boatrace setbounds <race track>§e.");
+							prefix() + "§eEdit the arena with §6/boatrace edit <track>§e.");
 					player.sendMessage(prefix() + "§eEach track has §62 checkpoints§e and §61 finish line§e.\n"
 							+ "§eMark the first checkpoint by placing §fwhite whool§e under the track and §8black wool §efor the second checkpoint.\n"
 							+ "§eMark the finish line by placing §8bedrock §eunder the track.");
-					return true;
-				}
-				if (args[0].equalsIgnoreCase("setlobby")) {
 
+					// Remove
+				} else if (args[0].equalsIgnoreCase("remove")) {
 					if (args.length == 1) {
-						ArenaManager.setLobby(player.getLocation());
+						player.sendMessage(prefix() + "§cMissing Arguments (/boatrace remove <name>)");
+						return true;
+					} else if (args.length > 2) {
+						player.sendMessage(prefix() + "§cToo Many Arguments (/boatrace remove <name>)");
+						return true;
+					}
+
+					if (gm.exists(args[1])) {
+						gm.remove(args[1]);
+						player.sendMessage(prefix() + "§aRemoved track §6"+ args[1] + "§a.");
+						return true;
+					} else {
+						player.sendMessage(prefix() + "§cTrack doesn't exist.");
+						return true;
+					}
+
+					// Set Lobby
+				} else if (args[0].equalsIgnoreCase("setlobby")) {
+					if (args.length == 1) {
+						gm.setLobby(player.getLocation());
 						player.sendMessage(prefix() + "§eLobby set.");
 						return true;
 					} else {
@@ -183,197 +127,123 @@ public class Commands implements CommandExecutor {
 						return true;
 					}
 
-				}
-
-				if (args[0].equalsIgnoreCase("setspawns")) {
+					// Edit
+				} else if (args[0].equalsIgnoreCase("edit")) {
 					if (args.length == 1) {
-						player.sendMessage(prefix() + "§cMissing Arguments! (/boatrace setspawns <race track>)");
-						return true;
+						player.sendMessage(prefix() + "§cMissing Arguments! (/boatrace edit <track>)");
 					} else if (args.length >= 3) {
-						player.sendMessage(prefix() + "§cToo Many Arguments! (/boatrace setspawns <race track>)");
-						return true;
+						player.sendMessage(prefix() + "§cToo Many Arguments! (/boatrace edit <track>)");
 					}
 
 					if (args.length == 2) {
-						if (ArenaManager.exists(args[1])) {
-							ItemStack item = ItemManager.playerPos; // Get spawnpoint item
-							ItemMeta meta = item.getItemMeta();
-							List<String> lore = item.getItemMeta().getLore();
-							lore.set(2, "§6" + args[1]); // Set Arena on item lore
-							meta.setLore(lore);
-							item.setItemMeta(meta);
-
-							player.getInventory().addItem(item);
-							player.sendMessage(
-									prefix() + "§6Right Click §eto set Player 1 spawnpoint to your current position.");
-							return true;
+						if (gm.exists(args[1])) {
+							EditMode.toggleEditMode(player, gm.getArena(args[1]));
+							player.sendMessage(prefix() + "§eToggled edit mode.");
 						} else {
 							player.sendMessage(prefix() + "§cInvalid Race!");
-							return true;
-						}
-					}
-				}
-				if (args[0].equalsIgnoreCase("setbounds")) {
-					if (args.length == 1) {
-						player.sendMessage(prefix() + "§cMissing Arguments! (/boatrace setbounds <race track>)");
-						return true;
-					} else if (args.length >= 3) {
-						player.sendMessage(prefix() + "§cToo Many Arguments! (/boatrace setbounds <race track>)");
-						return true;
-					}
-
-					if (args.length == 2) {
-						if (ArenaManager.exists(args[1])) {
-							ItemStack item = ItemManager.arenaPos; // Get spawnpoint item
-							ItemMeta meta = item.getItemMeta();
-							List<String> lore = item.getItemMeta().getLore();
-							lore.set(2, "§6" + args[1]); // Set Arena on item lore
-							meta.setLore(lore);
-							item.setItemMeta(meta);
-
-							player.getInventory().addItem(item);
-							player.sendMessage(prefix() + "§6Right Click §eto set first corner of track boundaries.");
-							return true;
-						} else {
-							player.sendMessage(prefix() + "§cInvalid Race!");
-							return true;
 						}
 					}
 				}
 			}
 
-			if (player.hasPermission("br.state")) {
-				if (args[0].equalsIgnoreCase("setstate")) {
+			if (player.hasPermission("btr.status")) {
+				// Set Status
+				if (args[0].equalsIgnoreCase("setstatus")) {
 					if (args.length <= 2) {
-						player.sendMessage(prefix() + "§cMissing Arguments! (/boatrace setstate <race track> <state>)");
-						return true;
+						player.sendMessage(
+								prefix() + "§cMissing Arguments! (/boatrace setstatus <race track> <status>)");
 					} else if (args.length >= 4) {
 						player.sendMessage(
-								prefix() + "§cToo Many Arguments! (/boatrace setstate <race track> <state>)");
-						return true;
+								prefix() + "§cToo Many Arguments! (/boatrace setstatus <race track> <status>)");
 					}
 					if (args.length == 3) {
-						if (ArenaManager.exists(args[1])) {
+						if (gm.exists(args[1])) {
 							switch (args[2]) {
 							case "setup":
-								ArenaManager.getArena(args[1]).setStatus(STATUS.SETTING_UP);
-								player.sendMessage(prefix() + "§eSet §6" + args[1] + " §estate to §6Setting Up§e.");
+								gm.getArena(args[1]).setStatus(Status.SETTING_UP);
+								player.sendMessage(prefix() + "§eSet §6" + args[1] + " §estatus to §6Setting Up§e.");
 								break;
 							case "joinable":
-								ArenaManager.getArena(args[1]).setStatus(STATUS.JOINABLE);
-								player.sendMessage(prefix() + "§eSet §6" + args[1] + " §estate to §aJoinable§e.");
+								gm.getArena(args[1]).setStatus(Status.JOINABLE);
+								player.sendMessage(prefix() + "§eSet §6" + args[1] + " §estatus to §aJoinable§e.");
 								break;
 							case "started":
-								ArenaManager.getArena(args[1]).setStatus(STATUS.JOINABLE);
-								player.sendMessage(prefix() + "§eSet §6" + args[1] + " §estate to §aStarted§e.");
+								gm.getArena(args[1]).setStatus(Status.JOINABLE);
+								player.sendMessage(prefix() + "§eSet §6" + args[1] + " §estatus to §aStarted§e.");
 								break;
 							case "ongoing":
-								ArenaManager.getArena(args[1]).setStatus(STATUS.ONGOING);
-								player.sendMessage(prefix() + "§eSet §6" + args[1] + " §estate to §6Ongoing§e.");
+								gm.getArena(args[1]).setStatus(Status.ONGOING);
+								player.sendMessage(prefix() + "§eSet §6" + args[1] + " §estatus to §6Ongoing§e.");
 								break;
 							case "cancelled":
-								ArenaManager.getArena(args[1]).setStatus(STATUS.CANCELLED);
-								player.sendMessage(prefix() + "§eSet §6" + args[1] + " §estate to §cCancelled§e.");
+								gm.getArena(args[1]).setStatus(Status.CANCELLED);
+								player.sendMessage(prefix() + "§eSet §6" + args[1] + " §estatus to §cCancelled§e.");
 								break;
 							case "ended":
-								ArenaManager.getArena(args[1]).setStatus(STATUS.ENDED);
-								player.sendMessage(prefix() + "§eSet §6" + args[1] + " §estate to §cEnded§e.");
+								gm.getArena(args[1]).setStatus(Status.ENDED);
+								player.sendMessage(prefix() + "§eSet §6" + args[1] + " §estatus to §cEnded§e.");
 								break;
 							case "unavailable":
-								ArenaManager.getArena(args[1]).setStatus(STATUS.UNAVAILABLE);
-								player.sendMessage(prefix() + "§eSet §6" + args[1] + " §estate to §cUnavailable§e.");
+								gm.getArena(args[1]).setStatus(Status.UNAVAILABLE);
+								player.sendMessage(prefix() + "§eSet §6" + args[1] + " §estatus to §cUnavailable§e.");
 								break;
 							default:
 								player.sendMessage(prefix()
-										+ "§cStates: §esetup, joinable, ongoing, cancelled, ended, unavailable.");
+										+ "§cStatus: §esetup, joinable, ongoing, cancelled, ended, unavailable.");
 								break;
 							}
 						} else {
 							player.sendMessage(prefix() + "§cInvalid Race!");
-							return true;
 						}
 					}
 				}
 			}
 
-			if (player.hasPermission("br.use")) {
+			// Yes I know but it's the only way to have specific error messages
+			if (player.hasPermission("btr.use")) {
+				// Join
 				if (args[0].equalsIgnoreCase("join")) {
 					if (args.length == 1) {
 						player.sendMessage(prefix() + "§cPlease specify the race track. (/boatrace join <race track>)");
-						return true;
-					}
-
-					if (args.length >= 3) {
+					} else if (args.length >= 3) {
 						player.sendMessage(prefix() + "§cToo Many Arguments! (/boatrace join <race track>)");
-						return true;
+					} else if (args.length == 2) {
+						if (gm.getLobby() != null) {
+							if (gm.exists(args[1])) {
+								if (gm.getArena(args[1]).getStatus() == Status.JOINABLE
+										|| gm.getArena(args[1]).getStatus() == Status.STARTING) {
+									if (gm.getArena(args[1]).getPlayers().size() < 4) {
+										if (gm.getArena(args[1]).getSpawns() != null
+												&& gm.getArena(args[1]).getSpawns().size() == 4) {
+											if (!gm.isInArena(player)) {
+												gm.join(gm.getArena(args[1]), player);
+											} else
+												player.sendMessage(prefix() + "§cYou're on a race already!");
+										} else
+											player.sendMessage(
+													prefix() + "§cSorry! This track has not been setup yet.");
+									} else
+										player.sendMessage(prefix() + "§cSorry! §7Game is full!");
+								} else
+									player.sendMessage(prefix() + "§cCan't join a game in progress.");
+							} else
+								player.sendMessage(prefix() + "§cInvalid Track!");
+						} else
+							player.sendMessage(prefix() + "§cLobby not set.");
 					}
 
-					if (args.length == 2) {
-						if (ArenaManager.exists(args[1])) {
-							if (ArenaManager.getArena(args[1]).getStatus() == STATUS.JOINABLE
-									|| ArenaManager.getArena(args[1]).getStatus() == STATUS.STARTING) {
-								if (ArenaManager.getArena(args[1]).getPlayers().size() < 4) {
-									if (ArenaManager.getArena(args[1]).getSpawns() != null) {
-										if (pArena.get(player.getUniqueId()) == null) {
-											ArenaManager.getArena(args[1]).join(player, args[1]);
-											player.sendMessage(prefix() + "§aJoined §e" + args[1]);
-											player.teleport(ArenaManager.getLobby());
-											gm.checkPlayers(args[1]);
-											return true;
-										} else {
-											player.sendMessage(prefix() + "§cYou're on a race already!");
-										}
-									} else {
-										player.sendMessage(prefix() + "§cSorry! This track has not been setup yet.");
-									}
-								} else {
-									player.sendMessage(prefix() + "§cSorry! §7Game is full!");
-									return true;
-								}
-							} else {
-								player.sendMessage(prefix() + "§cUnable to join track: "
-										+ ArenaManager.getArena(args[1]).getStatus().toString());
-								return true;
-							}
-						} else {
-							player.sendMessage(prefix() + "§cInvalid Track!");
-							return true;
-						}
-					}
-				}
-
-				if (args[0].equalsIgnoreCase("leave")) {
+					// Leave
+				} else if (args[0].equalsIgnoreCase("leave")) {
 					if (args.length >= 1) {
-						if (pArena.containsKey(player.getUniqueId())) {
-							if (pArena.get(player.getUniqueId()) != null) {
-								Arena arena = ArenaManager.getArena(pArena.get(player.getUniqueId()));
-								ArenaManager.getArena(pArena.get(player.getUniqueId())).leave(player);
-								if (arena.getPlayers().isEmpty()) {
-									arena.setStatus(STATUS.JOINABLE);
-								}
-								if (player.isInsideVehicle()) {
-									player.getVehicle().remove();
-								}
-								player.sendMessage(prefix() + "§cLeft race.");
-								player.teleport(ArenaManager.getLobby());
-								player.setGameMode(GameMode.SURVIVAL);
-								player.removePotionEffect(PotionEffectType.JUMP);
-								player.setWalkSpeed(0.2f);
-								return true;
-							} else {
-								player.sendMessage(prefix() + "§cYou're not inside a boat race!");
-								return true;
-							}
+						if (gm.isInArena(player)) {
+							gm.leave(gm.getPlayerArena(player), player);
 						} else {
 							player.sendMessage(prefix() + "§cYou're not inside a boat race!");
-							return true;
 						}
 					}
 				}
-
 			} else {
 				player.sendMessage(prefix() + "§cSorry! §7You can't do that!");
-				return true;
 			}
 
 		}
@@ -381,7 +251,7 @@ public class Commands implements CommandExecutor {
 
 	}
 
-	public String prefix() {
+	public static String prefix() {
 		return "§8[§bBoatRace§8]: §r";
 	}
 
