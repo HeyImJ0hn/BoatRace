@@ -1,6 +1,6 @@
 main: me.guitarxpress.boatrace.BoatRace
 name: BoatRace
-version: 1.1.0
+version: 1.1.1
 author: GuitarXpress
 api-version: 1.18
 softdepend: [Multiverse-Core]

@@ -87,7 +87,8 @@ public class PlayerMove implements Listener {
 							p.setGameMode(GameMode.SPECTATOR);
 							p.sendTitle("Finished!", null, 2, 40, 2);
 							p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
-							endTimer(arena.getName());
+							if (!gm.endCountdown.containsKey(arena))
+								endTimer(arena.getName());
 							if (arena.getScoreboard().size() == arena.getPlayers().size()) {
 								gm.endGame(arena.getName());
 							}
@@ -106,13 +107,14 @@ public class PlayerMove implements Listener {
 
 	public void endTimer(String name) {
 		Arena arena = gm.getArena(name);
-		for (Player p : Bukkit.getOnlinePlayers())
-			if (arena.getPlayers().contains(p.getUniqueId()))
-				p.sendMessage(
-						Commands.prefix() + "§eA Player has finished the race. You have §660 seconds §eto finish.");
-		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+		gm.endCountdown.put(arena, true);
+		for (UUID uuid : arena.getPlayers())
+			Bukkit.getPlayer(uuid).sendMessage(
+					Commands.prefix() + "§eA Player has finished the race. You have §660 seconds §eto finish.");
+		int task = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
 			if (arena.getStatus() == Status.ONGOING)
 				gm.endGame(name);
 		}, 60 * 20);
+		gm.endCountdownTask.put(arena, task);
 	}
 }

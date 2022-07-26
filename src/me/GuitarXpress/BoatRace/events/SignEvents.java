@@ -57,7 +57,7 @@ public class SignEvents implements Listener {
 					int z = event.getBlock().getZ();
 
 					event.setLine(0, "§7[§bBoatRace§7]");
-					event.setLine(1, "§b" + aName);
+					event.setLine(1, "§6" + aName);
 					event.setLine(2, "§e" + gm.getArena(aName).getPlayerCount() + "/4");
 
 					Location loc = new Location(world, x, y, z);
@@ -76,7 +76,7 @@ public class SignEvents implements Listener {
 		if (event.getBlock().getState() instanceof Sign) {
 			Sign sign = (Sign) event.getBlock().getState();
 			if (signsLoc.contains(sign.getLocation())) {
-				if (event.getPlayer().hasPermission("br.admin")) {
+				if (event.getPlayer().hasPermission("br.signs")) {
 					signsLoc.remove(sign.getLocation());
 				} else {
 					event.getPlayer().sendMessage("§7[§bBoatRace§7] §cSorry! You can't break these signs.");
@@ -127,7 +127,7 @@ public class SignEvents implements Listener {
 
 	public static void updateSign(Sign sign, GameManager gm, String arena) {
 		sign.setLine(0, "§7[§bBoatRace§7]");
-		sign.setLine(1, "§b" + arena);
+		sign.setLine(1, "§6" + arena);
 		sign.setLine(2, "§e" + gm.getArena(arena).getPlayerCount() + "/4");
 		switch (gm.getArena(arena).getStatus()) {
 		case SETTING_UP:

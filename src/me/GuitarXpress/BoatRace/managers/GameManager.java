@@ -52,6 +52,8 @@ public class GameManager implements Listener {
 
 	private Map<Arena, Integer> arenaCountdownTimer = new HashMap<>();
 	private Map<Arena, Integer> timeToStartMap = new HashMap<>();
+	public Map<Arena, Boolean> endCountdown = new HashMap<>();
+	public Map<Arena, Integer> endCountdownTask = new HashMap<>();
 
 	private Map<UUID, GameMode> oldGm = new HashMap<>();
 
@@ -276,6 +278,12 @@ public class GameManager implements Listener {
 		for (UUID uuid : toRemove)
 			leave(arena, Bukkit.getPlayer(uuid));
 
+		if (endCountdownTask.containsKey(arena)) {
+			Bukkit.getScheduler().cancelTask(endCountdownTask.get(arena));
+			endCountdownTask.remove(arena);
+			endCountdown.remove(arena);
+		}
+			
 		toRemove.clear();
 		arena.clearScore();
 		arena.setStatus(Status.JOINABLE);
